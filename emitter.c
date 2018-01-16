@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <stdarg.h>
 
+#include "definitions.c"
+#include "environment.c"
+
 #define def_llvm_type(label) \
   def_llvm_labeled_type(label, label);
 
@@ -12,48 +15,6 @@ def_llvm_type(i8);
 def_llvm_type(i32);
 def_llvm_type(i64);
 def_llvm_labeled_type(Void, void);
-
-typedef struct FnPrototype FnPrototype;
-typedef struct Environment Environment;
-
-struct FnPrototype {
-  int arity;
-  char* name;
-  char* ret;
-  char** args;
-};
-
-struct Environment {
-  int fnc;
-  FnPrototype** fns;
-};
-
-Environment* llvm_env() {
-  Environment* env = malloc(sizeof(Environment));
-  env->fnc = 0;
-  env->fns = NULL;
-  return env;
-}
-
-void llvm_env_store_fn(Environment* env, FnPrototype* fn) {
-  env->fnc += 1;
-  env->fns = realloc(env->fns, sizeof(FnPrototype) * env->fnc);
-  env->fns[env->fnc - 1] = fn;
-}
-
-void llvm_fn_free(FnPrototype* fn) {
-  free(fn->args);
-  free(fn);
-}
-
-void llvm_env_free(Environment* env) {
-  for (int i = 0; i < env->fnc; i++) {
-    llvm_fn_free(env->fns[i]);
-  }
-
-  free(env->fns);
-  free(env);
-}
 
 void llvm_comment(const char* msg) {
   printf("; %s\n", msg);
@@ -124,25 +85,4 @@ void llvm_main_start() {
 
 void llvm_main_close() {
   llvm_define_close("main");
-}
-
-void llvm_fn_print(FnPrototype* fn) {
-  printf("fn %s/%d (", fn->name, fn->arity);
-
-  for (int i = 0; i < fn->arity; i++) {
-    if (i != 0) {
-      printf(", ");
-    }
-
-    printf("%s", fn->args[i]);
-  }
-
-  printf(") %s\n", fn->ret);
-}
-
-void llvm_env_print(Environment* env) {
-  for (int i = 0; i < env->fnc; i++) {
-    printf("; - ");
-    llvm_fn_print(env->fns[i]);
-  }
 }
