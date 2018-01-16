@@ -1,7 +1,8 @@
 CC = clang
+CFLAGS = -std=c11 -Werror -Wall
 
 build: brainfuck.c
-	$(CC) -o brainfuck $^
+	$(CC) $(CFLAGS) -o brainfuck $^
 
 preprocess: emitter.c
 	$(CC) -E $^

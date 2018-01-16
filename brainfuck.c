@@ -21,11 +21,13 @@ void emit_loop_end() {}
 int main(void) {
   char* code = ",.";
 
-  llvm_declare("calloc", i8ptr, 2, i32, i32);
-  llvm_declare("free", Void, 1, i8ptr);
+  Environment* env = llvm_env();
 
-  llvm_declare("putchar", i32, 1, i32);
-  llvm_declare("getchar", i32, 0);
+  llvm_declare(env, "calloc", i8ptr, 2, i32, i32);
+  llvm_declare(env, "free", Void, 1, i8ptr);
+
+  llvm_declare(env, "putchar", i32, 1, i32);
+  llvm_declare(env, "getchar", i32, 0);
 
   llvm_main_start();
 
@@ -44,6 +46,11 @@ int main(void) {
 
   llvm_ret(i32, "0");
   llvm_main_close();
+
+  llvm_comment("Environment:");
+  llvm_env_print(env);
+
+  llvm_env_free(env);
 
   return 0;
 }
