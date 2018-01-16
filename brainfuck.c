@@ -23,7 +23,7 @@ int main(void) {
 
   Environment* env = llvm_env();
 
-  llvm_declare(env, "calloc", i8ptr, 2, i32, i32);
+  llvm_declare(env, "calloc", i8ptr, 2, i64, i64);
   llvm_declare(env, "free", Void, 1, i8ptr);
 
   llvm_declare(env, "putchar", i32, 1, i32);
@@ -31,6 +31,7 @@ int main(void) {
 
   llvm_main_start();
   llvm_alloc_and_store("ptr", i32, "0");
+  llvm_set_and_call("cells", "calloc", i8ptr, 4, i64, "120000", i64, "0");
 
   for (int i = 0; code[i] != '\0'; i++) {
     switch (code[i]) {
