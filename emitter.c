@@ -115,12 +115,22 @@ void llvm_emit_alloc_and_store(Str name, Str type, char* val) {
   llvm_emit_store(name, type, val);
 }
 
+void llvm_emit_set(Str name, Str value) {
+  // %3 = X
+  if (value == NULL || EQ(value, "")) {
+    // Value is coming from another emitter function
+    printf("%%%s = ", name);
+  } else {
+    printf("%%%s = %s\n", name, value);
+  }
+}
+
 // TODO Get arity from env?
-void llvm_emit_set_and_call(Str var_name, Str fn_name, Str ret, int arity, ...) {
+void llvm_emit_call(Str name, Str ret, int arity, ...) {
   va_list args;
 
-  // %3 = call i8* @calloc(i64 120000, i64 0)
-  printf("%%%s = call %s @%s(", var_name, ret, fn_name);
+  // call i8* @calloc(i64 120000, i64 0)
+  printf("call %s @%s(", ret, name);
   va_start(args, arity);
 
   for (int i = 0; i < arity; i += 2) {

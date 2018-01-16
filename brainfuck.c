@@ -31,7 +31,8 @@ int main(void) {
 
   llvm_emit_main_start();
   llvm_emit_alloc_and_store("ptr", i32, "0");
-  llvm_emit_set_and_call("cells", "calloc", i8ptr, 4, i64, "120000", i64, "0");
+  llvm_emit_set("cells", NULL);
+  llvm_emit_call("calloc", i8ptr, 4, i64, "120000", i64, "0");
 
   for (int i = 0; code[i] != '\0'; i++) {
     switch (code[i]) {
@@ -46,6 +47,7 @@ int main(void) {
     }
   }
 
+  llvm_emit_call("free", Void, 2, i8ptr, "%cells");
   llvm_emit_ret(i32, "0");
   llvm_emit_main_close();
 
