@@ -41,9 +41,9 @@ void llvm_env_store_fn(Environment* env, FnPrototype* fn) {
   env->fns[env->fnc - 1] = fn;
 }
 
-void llvm_fn_free(FnPrototype* proto) {
-  free(proto->args);
-  free(proto);
+void llvm_fn_free(FnPrototype* fn) {
+  free(fn->args);
+  free(fn);
 }
 
 void llvm_env_free(Environment* env) {
@@ -64,15 +64,15 @@ void llvm_ret(const char* ret, const char* val) {
 }
 
 FnPrototype* llvm_fn(const char* kind, const char* name, const char* ret, int arity, va_list args) {
-  FnPrototype* proto = malloc(sizeof(FnPrototype));
+  FnPrototype* fn = malloc(sizeof(FnPrototype));
 
-  proto->arity = arity;
-  proto->name = (char*) name;
-  proto->ret = (char*) ret;
-  proto->args = NULL;
+  fn->arity = arity;
+  fn->name = (char*) name;
+  fn->ret = (char*) ret;
+  fn->args = NULL;
 
   if (arity > 0) {
-    proto->args = malloc(sizeof(char*) * arity);
+    fn->args = malloc(sizeof(char*) * arity);
   }
 
   printf("%s %s @%s(", kind, ret, name);
@@ -82,26 +82,26 @@ FnPrototype* llvm_fn(const char* kind, const char* name, const char* ret, int ar
       printf(", ");
     }
 
-    proto->args[i] = va_arg(args, char*);
-    printf("%s", proto->args[i]);
+    fn->args[i] = va_arg(args, char*);
+    printf("%s", fn->args[i]);
   }
 
   printf(")");
 
-  return proto;
+  return fn;
 }
 
 void llvm_declare(Environment* env, const char* name, const char* ret, int arity, ...) {
   va_list args;
   va_start(args, arity);
-  FnPrototype* proto = llvm_fn("declare", name, ret, arity, args);
+  FnPrototype* fn = llvm_fn("declare", name, ret, arity, args);
   va_end(args);
   putchar('\n');
 
   if (env == NULL) {
-    llvm_fn_free(proto);
+    llvm_fn_free(fn);
   } else {
-    llvm_env_store_fn(env, proto);
+    llvm_env_store_fn(env, fn);
   }
 }
 
@@ -126,18 +126,18 @@ void llvm_main_close() {
   llvm_define_close("main");
 }
 
-void llvm_fn_print(FnPrototype* proto) {
-  printf("fn %s/%d (", proto->name, proto->arity);
+void llvm_fn_print(FnPrototype* fn) {
+  printf("fn %s/%d (", fn->name, fn->arity);
 
-  for (int i = 0; i < proto->arity; i++) {
+  for (int i = 0; i < fn->arity; i++) {
     if (i != 0) {
       printf(", ");
     }
 
-    printf("%s", proto->args[i]);
+    printf("%s", fn->args[i]);
   }
 
-  printf(") %s\n", proto->ret);
+  printf(") %s\n", fn->ret);
 }
 
 void llvm_env_print(Environment* env) {
