@@ -113,12 +113,17 @@ void llvm_emit_main_close() {
 
 void llvm_emit_alloc(Str name, Str type) {
   // %2 = alloca i32, align 4
-  printf("%%%s = alloca %s\n", name, type);
+  printf("%s = alloca %s\n", name, type);
+}
+
+void llvm_emit_load(Str name, Str type) {
+  // load i32* %2
+  printf("load %s, %s %s\n", type, llvm_ptr(type), name);
 }
 
 void llvm_emit_store(Str name, Str type, char* val) {
   // store i32 42, i32* %2, align 4
-  printf("store %s %s, %s %%%s\n", type, val, llvm_ptr(type), name);
+  printf("store %s %s, %s %s\n", type, val, llvm_ptr(type), name);
 }
 
 void llvm_emit_alloc_and_store(Str name, Str type, char* val) {
@@ -130,9 +135,9 @@ void llvm_emit_set(Str name, Str value) {
   // %3 = X
   if (value == NULL || EQ(value, "")) {
     // Value is coming from another emitter function
-    printf("%%%s = ", name);
+    printf("%s = ", name);
   } else {
-    printf("%%%s = %s\n", name, value);
+    printf("%s = %s\n", name, value);
   }
 }
 

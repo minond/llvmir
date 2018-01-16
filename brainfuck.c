@@ -20,7 +20,10 @@ void emit_loop_end() {}
 
 int main(void) {
   Str code = ",.";
-  Var cells = var("cells");
+
+  Var cells = var(cells);
+  Var ptr = var(ptr);
+  Var idx = var(idx);
 
   Environment* env = llvm_env();
 
@@ -30,10 +33,14 @@ int main(void) {
   llvm_emit_declare(env, "getchar", i32, 0);
 
   llvm_emit_main_start();
-  llvm_emit_alloc_and_store("ptr", i32, "0");
+  llvm_emit_alloc_and_store(ptr, i64, "0");
 
-  llvm_emit_set("cells", NULL);
+  llvm_emit_set(cells, NULL);
   llvm_emit_call("calloc", i8ptr, 4, i64, "120000", i64, "0");
+
+  // XXX Test increment, remove once done testing
+  llvm_emit_set(idx, NULL);
+  llvm_emit_load(ptr, i64);
 
   for (int i = 0; code[i] != '\0'; i++) {
     switch (code[i]) {
