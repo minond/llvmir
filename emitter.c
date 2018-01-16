@@ -7,6 +7,11 @@
 
 #define Str const char*
 
+#define Var const char*
+
+#define var(name) \
+  "%" #name;
+
 #define def_llvm_labeled_type(label, value) \
   const char* label = #value; \
   const char* label ## ptr = #value "*";
@@ -27,6 +32,12 @@ Str llvm_ptr(Str type) {
   if (EQ(type, i32)) return i32ptr;
   if (EQ(type, i64)) return i64ptr;
                      return Voidptr;
+}
+
+Str llvm_var(char* buff, Str name) {
+  strcat(buff, "%");
+  strcat(buff, name);
+  return buff;
 }
 
 void llvm_emit_comment(Str msg) {
