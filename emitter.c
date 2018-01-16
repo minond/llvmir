@@ -1,27 +1,38 @@
 #include <stdio.h>
 #include <stdarg.h>
+#include <string.h>
 
 #include "definitions.c"
 #include "environment.c"
 
-#define def_llvm_type(label) \
-  def_llvm_labeled_type(label, label);
-
 #define def_llvm_labeled_type(label, value) \
   const char* label = #value; \
   const char* label ## ptr = #value "*";
+
+#define def_llvm_type(label) \
+  def_llvm_labeled_type(label, label);
+
+#define EQ(lhs, rhs) \
+  strcmp(lhs, rhs) == 0
 
 def_llvm_type(i8);
 def_llvm_type(i32);
 def_llvm_type(i64);
 def_llvm_labeled_type(Void, void);
 
+const char* llvm_ptr(const char* type) {
+  if (EQ(type, i8))  return i8ptr;
+  if (EQ(type, i32)) return i32ptr;
+  if (EQ(type, i64)) return i64ptr;
+                     return Voidptr;
+}
+
 void llvm_comment(const char* msg) {
   printf("; %s\n", msg);
 }
 
 void llvm_ret(const char* ret, const char* val) {
-  printf("  ret %s %s;\n", ret, val);
+  printf("ret %s %s;\n", ret, val);
 }
 
 FnPrototype* llvm_fn(const char* kind, const char* name, const char* ret, int arity, va_list args) {
@@ -85,4 +96,19 @@ void llvm_main_start() {
 
 void llvm_main_close() {
   llvm_define_close("main");
+}
+
+void llvm_alloc(const char* name, const char* type) {
+  // %2 = alloca i32, align 4
+  printf("%%%s = alloca %s\n", name, type);
+}
+
+void llvm_store(const char* name, const char* type, char* val) {
+  // store i32 42, i32* %2, align 4
+  printf("store %s %s, %s %%%s\n", type, val, llvm_ptr(type), name);
+}
+
+void llvm_alloc_and_store(const char* name, const char* type, char* val) {
+  llvm_alloc(name, type);
+  llvm_store(name, type, val);
 }

@@ -12,4 +12,3 @@ struct Environment {
   int fnc;
   FnPrototype** fns;
 };
-

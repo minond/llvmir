@@ -30,6 +30,7 @@ int main(void) {
   llvm_declare(env, "getchar", i32, 0);
 
   llvm_main_start();
+  llvm_alloc_and_store("ptr", i32, "0");
 
   for (int i = 0; code[i] != '\0'; i++) {
     switch (code[i]) {
