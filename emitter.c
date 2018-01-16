@@ -29,15 +29,15 @@ Str llvm_ptr(Str type) {
                      return Voidptr;
 }
 
-void llvm_comment(Str msg) {
+void llvm_emit_comment(Str msg) {
   printf("; %s\n", msg);
 }
 
-void llvm_ret(Str ret, Str val) {
+void llvm_emit_ret(Str ret, Str val) {
   printf("ret %s %s;\n", ret, val);
 }
 
-FnPrototype* llvm_fn(Str kind, Str name, Str ret, int arity, va_list args) {
+FnPrototype* llvm_emit_fn(Str kind, Str name, Str ret, int arity, va_list args) {
   FnPrototype* fn = malloc(sizeof(FnPrototype));
 
   fn->arity = arity;
@@ -65,10 +65,10 @@ FnPrototype* llvm_fn(Str kind, Str name, Str ret, int arity, va_list args) {
   return fn;
 }
 
-void llvm_declare(Environment* env, Str name, Str ret, int arity, ...) {
+void llvm_emit_declare(Environment* env, Str name, Str ret, int arity, ...) {
   va_list args;
   va_start(args, arity);
-  FnPrototype* fn = llvm_fn("declare", name, ret, arity, args);
+  FnPrototype* fn = llvm_emit_fn("declare", name, ret, arity, args);
   va_end(args);
   putchar('\n');
 
@@ -79,44 +79,44 @@ void llvm_declare(Environment* env, Str name, Str ret, int arity, ...) {
   }
 }
 
-void llvm_define_start(Str name, Str ret, int arity, ...) {
+void llvm_emit_define_start(Str name, Str ret, int arity, ...) {
   va_list args;
   va_start(args, arity);
   printf("\n; Function definition start: %s\n", name);
-  llvm_fn("define", name, ret, arity, args);
+  llvm_emit_fn("define", name, ret, arity, args);
   va_end(args);
   printf(" {\n");
 }
 
-void llvm_define_close(Str name) {
+void llvm_emit_define_close(Str name) {
   printf("}\n; Function definition end: %s\n", name);
 }
 
-void llvm_main_start() {
-  llvm_define_start("main", i32, 0);
+void llvm_emit_main_start() {
+  llvm_emit_define_start("main", i32, 0);
 }
 
-void llvm_main_close() {
-  llvm_define_close("main");
+void llvm_emit_main_close() {
+  llvm_emit_define_close("main");
 }
 
-void llvm_alloc(Str name, Str type) {
+void llvm_emit_alloc(Str name, Str type) {
   // %2 = alloca i32, align 4
   printf("%%%s = alloca %s\n", name, type);
 }
 
-void llvm_store(Str name, Str type, char* val) {
+void llvm_emit_store(Str name, Str type, char* val) {
   // store i32 42, i32* %2, align 4
   printf("store %s %s, %s %%%s\n", type, val, llvm_ptr(type), name);
 }
 
-void llvm_alloc_and_store(Str name, Str type, char* val) {
-  llvm_alloc(name, type);
-  llvm_store(name, type, val);
+void llvm_emit_alloc_and_store(Str name, Str type, char* val) {
+  llvm_emit_alloc(name, type);
+  llvm_emit_store(name, type, val);
 }
 
 // TODO Get arity from env?
-void llvm_set_and_call(Str var_name, Str fn_name, Str ret, int arity, ...) {
+void llvm_emit_set_and_call(Str var_name, Str fn_name, Str ret, int arity, ...) {
   va_list args;
 
   // %3 = call i8* @calloc(i64 120000, i64 0)

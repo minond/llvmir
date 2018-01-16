@@ -23,15 +23,15 @@ int main(void) {
 
   Environment* env = llvm_env();
 
-  llvm_declare(env, "calloc", i8ptr, 2, i64, i64);
-  llvm_declare(env, "free", Void, 1, i8ptr);
+  llvm_emit_declare(env, "calloc", i8ptr, 2, i64, i64);
+  llvm_emit_declare(env, "free", Void, 1, i8ptr);
 
-  llvm_declare(env, "putchar", i32, 1, i32);
-  llvm_declare(env, "getchar", i32, 0);
+  llvm_emit_declare(env, "putchar", i32, 1, i32);
+  llvm_emit_declare(env, "getchar", i32, 0);
 
-  llvm_main_start();
-  llvm_alloc_and_store("ptr", i32, "0");
-  llvm_set_and_call("cells", "calloc", i8ptr, 4, i64, "120000", i64, "0");
+  llvm_emit_main_start();
+  llvm_emit_alloc_and_store("ptr", i32, "0");
+  llvm_emit_set_and_call("cells", "calloc", i8ptr, 4, i64, "120000", i64, "0");
 
   for (int i = 0; code[i] != '\0'; i++) {
     switch (code[i]) {
@@ -46,12 +46,11 @@ int main(void) {
     }
   }
 
-  llvm_ret(i32, "0");
-  llvm_main_close();
+  llvm_emit_ret(i32, "0");
+  llvm_emit_main_close();
 
-  llvm_comment("Environment:");
+  llvm_emit_comment("Environment:");
   llvm_env_print(env);
-
   llvm_env_free(env);
 
   return 0;
