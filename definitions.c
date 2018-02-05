@@ -1,5 +1,5 @@
-typedef struct FnPrototype FnPrototype;
-typedef struct Environment Environment;
+typedef struct FnPrototype FnPrototype_t;
+typedef struct Environment Environment_t;
 
 struct FnPrototype {
   int arity;
@@ -9,6 +9,7 @@ struct FnPrototype {
 };
 
 struct Environment {
+  int tmpc;
   int fnc;
-  FnPrototype** fns;
+  FnPrototype_t** fns;
 };

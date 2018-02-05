@@ -23,9 +23,8 @@ int main(void) {
 
   Var cells = var(cells);
   Var ptr = var(ptr);
-  Var idx = var(idx);
 
-  Environment* env = llvm_env();
+  Environment_t* env = llvm_env();
 
   llvm_emit_declare(env, "calloc", i8ptr, 2, i64, i64);
   llvm_emit_declare(env, "free", Void, 1, i8ptr);

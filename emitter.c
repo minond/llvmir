@@ -44,12 +44,16 @@ void llvm_emit_comment(Str msg) {
   printf("; %s\n", msg);
 }
 
+void llvm_emit_raw(Str str) {
+  printf("%s\n", str);
+}
+
 void llvm_emit_ret(Str ret, Str val) {
   printf("ret %s %s;\n", ret, val);
 }
 
-FnPrototype* llvm_emit_fn(Str kind, Str name, Str ret, int arity, va_list args) {
-  FnPrototype* fn = malloc(sizeof(FnPrototype));
+FnPrototype_t* llvm_emit_fn(Str kind, Str name, Str ret, int arity, va_list args) {
+  FnPrototype_t* fn = malloc(sizeof(FnPrototype_t));
 
   fn->arity = arity;
   fn->name = (char*) name;
@@ -76,10 +80,10 @@ FnPrototype* llvm_emit_fn(Str kind, Str name, Str ret, int arity, va_list args) 
   return fn;
 }
 
-void llvm_emit_declare(Environment* env, Str name, Str ret, int arity, ...) {
+void llvm_emit_declare(Environment_t* env, Str name, Str ret, int arity, ...) {
   va_list args;
   va_start(args, arity);
-  FnPrototype* fn = llvm_emit_fn("declare", name, ret, arity, args);
+  FnPrototype_t* fn = llvm_emit_fn("declare", name, ret, arity, args);
   va_end(args);
   putchar('\n');
 
