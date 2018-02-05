@@ -9,9 +9,15 @@ Environment_t* llvm_env() {
 }
 
 const char* llvm_env_get_tmp(Environment_t* env) {
+  env->tmpc += 1;
   static char buff[50];
-  snprintf(buff, sizeof(buff), "%%tmp%i", env->tmpc++);
-  return buff;
+  snprintf(buff, sizeof(buff), "%%tmp%i", env->tmpc);
+
+  char* copy;
+  copy = malloc(sizeof(char) * strlen(buff));
+  strcpy(copy, buff);
+
+  return copy;
 }
 
 void llvm_env_store_fn(Environment_t* env, FnPrototype_t* fn) {

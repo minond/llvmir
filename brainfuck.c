@@ -2,24 +2,8 @@
 #include <stdlib.h>
 #include "emitter.c"
 
-void emit_shift_right() {}
-
-void emit_shift_left() {}
-
-void emit_increment() {}
-
-void emit_decrement() {}
-
-void emit_putchar() {}
-
-void emit_getchar() {}
-
-void emit_loop_start() {}
-
-void emit_loop_end() {}
-
 int main(void) {
-  Str code = ",.";
+  Str code = ">>><<<,.";
 
   Var cells = var(cells);
   Var ptr = var(ptr);
@@ -37,25 +21,24 @@ int main(void) {
   llvm_emit_set(cells, NULL);
   llvm_emit_call("calloc", i8ptr, 4, i64, "120000", i64, "0");
 
-  // XXX Test increment, remove once done testing.
-  llvm_emit_add(env, ptr, i64, 1);
-  // llvm_emit_set(idx, NULL);
-  // llvm_emit_load(ptr, i64);
-  // llvm_emit_raw("add nsw i64 %idx, 1");
-  // llvm_emit_raw("store i64 %idx, i64* %ptr");
-
   // XXX Test accessing index of %cells and setting its value.
 
   for (int i = 0; code[i] != '\0'; i++) {
     switch (code[i]) {
-      case '>': emit_shift_right(); break;
-      case '<': emit_shift_left(); break;
-      case '+': emit_increment(); break;
-      case '-': emit_decrement(); break;
-      case '.': emit_putchar(); break;
-      case ',': emit_getchar(); break;
-      case '[': emit_loop_start();
-      case ']': emit_loop_end(); break;
+    case '>':
+      llvm_emit_add(env, ptr, i64, 1);
+      break;
+
+    case '<':
+      llvm_emit_sub(env, ptr, i64, 1);
+      break;
+
+    // case '+': emit_increment(); break;
+    // case '-': emit_decrement(); break;
+    // case '.': emit_putchar(); break;
+    // case ',': emit_getchar(); break;
+    // case '[': emit_loop_start();
+    // case ']': emit_loop_end(); break;
     }
   }
 

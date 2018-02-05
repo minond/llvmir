@@ -115,14 +115,34 @@ void llvm_emit_main_close() {
   llvm_emit_define_close("main");
 }
 
+void llvm_emit_sub(Environment_t* env, Str var, Str type, int rhs) {
+  // %tmp = load i64, i64* %varptr
+  // add nsw i64 %tmp, 1
+  // store i64 %tmp, i64* %varptr
+  Str tmp1 = llvm_env_get_tmp(env);
+  Str tmp2 = llvm_env_get_tmp(env);
+
+  printf("%s = load %s, %s %s\n", tmp1, type, llvm_ptr(type), var);
+  printf("%s = sub nsw %s %s, %i\n", tmp2, type, tmp1, rhs);
+  printf("store %s %s, %s %s\n", type, tmp1, llvm_ptr(type), var);
+
+  free((void*) tmp1);
+  free((void*) tmp2);
+}
+
 void llvm_emit_add(Environment_t* env, Str var, Str type, int rhs) {
   // %tmp = load i64, i64* %varptr
   // add nsw i64 %tmp, 1
   // store i64 %tmp, i64* %varptr
-  Str tmp = llvm_env_get_tmp(env);
-  printf("%s = load %s, %s %s\n", tmp, type, llvm_ptr(type), var);
-  printf("add nsw %s %s, %i\n", type, tmp, rhs);
-  printf("store %s %s, %s %s\n", type, tmp, llvm_ptr(type), var);
+  Str tmp1 = llvm_env_get_tmp(env);
+  Str tmp2 = llvm_env_get_tmp(env);
+
+  printf("%s = load %s, %s %s\n", tmp1, type, llvm_ptr(type), var);
+  printf("%s = add nsw %s %s, %i\n", tmp2, type, tmp1, rhs);
+  printf("store %s %s, %s %s\n", type, tmp1, llvm_ptr(type), var);
+
+  free((void*) tmp1);
+  free((void*) tmp2);
 }
 
 void llvm_emit_alloc(Str name, Str type) {
