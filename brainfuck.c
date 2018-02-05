@@ -37,9 +37,14 @@ int main(void) {
   llvm_emit_set(cells, NULL);
   llvm_emit_call("calloc", i8ptr, 4, i64, "120000", i64, "0");
 
-  // XXX Test increment, remove once done testing
-  llvm_emit_set(idx, NULL);
-  llvm_emit_load(ptr, i64);
+  // XXX Test increment, remove once done testing.
+  llvm_emit_add(env, ptr, i64, 1);
+  // llvm_emit_set(idx, NULL);
+  // llvm_emit_load(ptr, i64);
+  // llvm_emit_raw("add nsw i64 %idx, 1");
+  // llvm_emit_raw("store i64 %idx, i64* %ptr");
+
+  // XXX Test accessing index of %cells and setting its value.
 
   for (int i = 0; code[i] != '\0'; i++) {
     switch (code[i]) {

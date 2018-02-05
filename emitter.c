@@ -115,6 +115,16 @@ void llvm_emit_main_close() {
   llvm_emit_define_close("main");
 }
 
+void llvm_emit_add(Environment_t* env, Str var, Str type, int rhs) {
+  // %tmp = load i64, i64* %varptr
+  // add nsw i64 %tmp, 1
+  // store i64 %tmp, i64* %varptr
+  Str tmp = llvm_env_get_tmp(env);
+  printf("%s = load %s, %s %s\n", tmp, type, llvm_ptr(type), var);
+  printf("add nsw %s %s, %i\n", type, tmp, rhs);
+  printf("store %s %s, %s %s\n", type, tmp, llvm_ptr(type), var);
+}
+
 void llvm_emit_alloc(Str name, Str type) {
   // %2 = alloca i32, align 4
   printf("%s = alloca %s\n", name, type);
